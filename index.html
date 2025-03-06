@@ -126,6 +126,16 @@
             display: none;
         }
         
+        .info-message {
+            background-color: #e0f2fe;
+            border: 1px solid #38bdf8;
+            color: #0369a1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
         .restaurant-card {
             background-color: var(--card-background);
             border-radius: 8px;
@@ -314,6 +324,7 @@
     </button>
     
     <div id="error-message" class="error-message"></div>
+    <div id="info-message" class="info-message"></div>
     
     <div id="status-message" class="status-message">Velg en by eller finn nærmeste restaurant</div>
     
@@ -515,6 +526,7 @@
         const findNearestBtn = document.getElementById('find-nearest-btn');
         const statusMessage = document.getElementById('status-message');
         const errorMessage = document.getElementById('error-message');
+        const infoMessage = document.getElementById('info-message');
         const restaurantsContainer = document.getElementById('restaurants-container');
         const loadingSpinner = document.getElementById('loading-spinner');
         
@@ -597,73 +609,93 @@
         // Finn nærmeste restaurant basert på brukerens posisjon
         function findNearestRestaurant() {
             errorMessage.style.display = 'none';
+            infoMessage.style.display = 'none';
             loadingSpinner.style.display = 'inline-block';
             findNearestBtn.disabled = true;
             statusMessage.textContent = "Henter din posisjon...";
             
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    function(position) {
-                        userPosition = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        
-                        statusMessage.textContent = "Beregner avstander...";
-                        
-                        // Hent alle restauranter
-                        let allRestaurants = getAllRestaurants();
-                        
-                        // Beregn avstand til hver restaurant
-                        allRestaurants.forEach(restaurant => {
-                            restaurant.distance = calculateDistance(
-                                userPosition.lat, userPosition.lng,
-                                restaurant.lat, restaurant.lng
-                            );
-                        });
-                        
-                        // Sorter etter avstand
-                        allRestaurants.sort((a, b) => a.distance - b.distance);
-                        
-                        // Vis resultater
-                        displayRestaurantCards(allRestaurants);
-                        statusMessage.textContent = "Restauranter sortert etter avstand:";
-                        loadingSpinner.style.display = 'none';
-                        findNearestBtn.disabled = false;
-                    },
-                    function(error) {
-                        loadingSpinner.style.display = 'none';
-                        findNearestBtn.disabled = false;
-                        
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage.textContent = "Du må gi tillatelse til posisjonstjenester for å bruke denne funksjonen.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage.textContent = "Posisjonsinformasjon er utilgjengelig.";
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage.textContent = "Tidsavbrudd for posisjonsforespørsel.";
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                errorMessage.textContent = "En ukjent feil oppstod.";
-                                break;
-                        }
-                        
-                        errorMessage.style.display = 'block';
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
-                );
-            } else {
+            // Sjekk om geolokasjon er tilgjengelig
+            if (!navigator.geolocation) {
                 errorMessage.textContent = "Geolokasjon støttes ikke av denne nettleseren.";
                 errorMessage.style.display = 'block';
                 loadingSpinner.style.display = 'none';
                 findNearestBtn.disabled = false;
+                return;
             }
+            
+            // Vis informasjonsmelding om tillatelser på iOS
+            if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                infoMessage.innerHTML = "På iOS: Hvis du ikke ser en tillatelsesforespørsel, gå til <strong>Innstillinger > Safari > Nettstedsinnstillinger</strong> og aktiver 'Posisjonstjenester' for dette nettstedet.";
+                infoMessage.style.display = 'block';
+            }
+            
+            // Prøv å få posisjonen med høy nøyaktighet først
+            navigator.geolocation.getCurrentPosition(
+                handlePositionSuccess,
+                function(error) {
+                    // Hvis høy nøyaktighet feiler, prøv med lavere nøyaktighet
+                    navigator.geolocation.getCurrentPosition(
+                        handlePositionSuccess,
+                        handlePositionError,
+                        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                    );
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        }
+        
+        // Håndter vellykket posisjonshenting
+        function handlePositionSuccess(position) {
+            userPosition = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            infoMessage.style.display = 'none';
+            statusMessage.textContent = "Beregner avstander...";
+            
+            // Hent alle restauranter
+            let allRestaurants = getAllRestaurants();
+            
+            // Beregn avstand til hver restaurant
+            allRestaurants.forEach(restaurant => {
+                restaurant.distance = calculateDistance(
+                    userPosition.lat, userPosition.lng,
+                    restaurant.lat, restaurant.lng
+                );
+            });
+            
+            // Sorter etter avstand
+            allRestaurants.sort((a, b) => a.distance - b.distance);
+            
+            // Vis resultater
+            displayRestaurantCards(allRestaurants);
+            statusMessage.textContent = "Restauranter sortert etter avstand:";
+            loadingSpinner.style.display = 'none';
+            findNearestBtn.disabled = false;
+        }
+        
+        // Håndter feil ved posisjonshenting
+        function handlePositionError(error) {
+            loadingSpinner.style.display = 'none';
+            findNearestBtn.disabled = false;
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage.innerHTML = "Du må gi tillatelse til posisjonstjenester for å bruke denne funksjonen.<br><br>På iPhone: Gå til <strong>Innstillinger > Personvern > Posisjonstjenester > Safari</strong> og velg 'Når appen brukes' for Safari.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage.textContent = "Posisjonsinformasjon er utilgjengelig. Sjekk at GPS er aktivert.";
+                    break;
+                case error.TIMEOUT:
+                    errorMessage.textContent = "Tidsavbrudd for posisjonsforespørsel. Prøv igjen.";
+                    break;
+                default:
+                    errorMessage.textContent = "En ukjent feil oppstod. Prøv igjen senere.";
+                    break;
+            }
+            
+            errorMessage.style.display = 'block';
         }
         
         // Vis restaurantkort
@@ -685,7 +717,16 @@
                 // Restaurantnavn med lenke
                 const nameLink = document.createElement('a');
                 nameLink.className = 'restaurant-name';
-                nameLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                
+                // Lag Google Maps-URL med brukerens posisjon som startpunkt hvis tilgjengelig
+                let mapUrl;
+                if (userPosition) {
+                    mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${userPosition.lat},${userPosition.lng}&destination=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}&travelmode=walking`;
+                } else {
+                    mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                }
+                
+                nameLink.href = mapUrl;
                 nameLink.target = '_blank';
                 nameLink.textContent = restaurant.name;
                 
@@ -802,10 +843,12 @@
                     details.appendChild(menuExamples);
                 }
                 
-                // Veibeskrivelse-lenke
+                // Veibeskrivelse-lenke med brukerens posisjon som startpunkt
                 const directionsLink = document.createElement('a');
                 directionsLink.className = 'directions-link';
-                directionsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                
+                // Bruk samme URL som for restaurantnavnet
+                directionsLink.href = mapUrl;
                 directionsLink.target = '_blank';
                 
                 // Ikon for veibeskrivelse
@@ -852,6 +895,25 @@
         
         // Vis alle restauranter ved oppstart
         displayRestaurantsByCity();
+        
+        // Prøv å få posisjonstillatelse tidlig
+        if (navigator.geolocation) {
+            // Bare sjekk om tillatelse er gitt, ikke vis noe til brukeren ennå
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Lagre posisjonen for senere bruk
+                    userPosition = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    // Ikke gjør noe mer her - brukeren må klikke på knappen for å se resultater
+                },
+                function(error) {
+                    // Ignorer feil her - vi vil bare sjekke tillatelse
+                },
+                { timeout: 3000, maximumAge: 60000 }
+            );
+        }
     </script>
 </body>
 </html>
