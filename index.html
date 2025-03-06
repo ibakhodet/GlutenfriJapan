@@ -3,114 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Glutenfri Japan</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Glutenfri Japan">
+    <title>Glutenfri Japan - Finn glutenfrie restauranter</title>
     <style>
+        :root {
+            --primary-color: #c42626;
+            --background-color: #f5f5f5;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --secondary-text: #666666;
+            --border-color: #dddddd;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-color);
             -webkit-text-size-adjust: 100%;
             -webkit-tap-highlight-color: rgba(0,0,0,0);
         }
         
-        h1 {
-            color: #c42626;
+        header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 24px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
         }
         
         h2 {
-            color: #333;
-            font-size: 1.2em;
-            text-align: center;
-            margin-top: 0;
+            color: var(--secondary-text);
+            font-size: 1rem;
             font-weight: normal;
         }
         
-        .restaurant-card {
-            background-color: white;
+        .filter-container {
+            background-color: var(--card-background);
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #c42626;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
-        .restaurant-name {
-            font-weight: bold;
-            color: #c42626;
-            font-size: 1.2em;
-            margin-bottom: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: block;
-        }
-        
-        .restaurant-name:hover {
-            text-decoration: underline;
-        }
-        
-        .distance {
-            color: #666;
-            font-weight: bold;
-        }
-        
-        .address {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-        
-        .notes {
-            color: #666;
-            font-size: 0.9em;
-            margin-bottom: 8px;
-        }
-        
-        .menu-examples {
-            background-color: #f8f8f8;
+        select {
+            flex: 1;
             padding: 10px;
-            border-radius: 5px;
-            margin-top: 8px;
-            border-left: 3px solid #e0e0e0;
-        }
-        
-        .menu-item {
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        
-        .japanese-text {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .translation {
-            color: #666;
-            font-style: italic;
-        }
-        
-        .city-tag {
-            display: inline-block;
-            background-color: #f2f2f2;
-            border-radius: 3px;
-            padding: 2px 6px;
-            font-size: 0.8em;
-            margin-right: 5px;
-            color: #666;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+            background-color: var(--card-background);
+            color: var(--text-color);
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 30px;
         }
         
         button {
-            background-color: #c42626;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 15px;
+            padding: 12px 16px;
             border-radius: 8px;
+            font-size: 1rem;
             cursor: pointer;
-            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             -webkit-appearance: none;
             appearance: none;
             touch-action: manipulation;
@@ -120,98 +99,171 @@
             background-color: #d83b3b;
         }
         
-        /* Større touch-targets for iPhone */
-        @media (max-width: 768px) {
-            button {
-                padding: 14px 20px; 
-                font-size: 1.1em;
-            }
-            
-            .action-btn {
-                padding: 8px 12px;
-                font-size: 0.9em;
-            }
-            
-            /* Større avstand mellom elementer for lettere tapping */
-            .restaurant-card {
-                padding: 18px;
-                margin-bottom: 20px;
-            }
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         
-        .action-button {
-            display: block;
-            margin: 20px auto;
-            width: 80%;
-            max-width: 300px;
+        .find-nearest-btn {
+            width: 100%;
+            margin-bottom: 24px;
         }
         
-        .secondary-button {
-            background-color: #666;
-        }
-        
-        .filter-controls {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .status-message {
             text-align: center;
-        }
-        
-        select {
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            margin-right: 10px;
-            font-size: 1em;
-        }
-        
-        .status {
-            text-align: center;
-            margin: 20px 0;
-            color: #666;
+            margin: 16px 0;
+            color: var(--secondary-text);
             font-style: italic;
         }
         
-        .restaurant-actions {
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+        
+        .restaurant-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 16px;
+            border-left: 4px solid var(--primary-color);
+            overflow: hidden;
+        }
+        
+        .restaurant-card-header {
+            padding: 16px;
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
+            align-items: flex-start;
         }
         
-        .action-btn {
-            background-color: #f0f0f0;
-            border: 1px solid #ddd;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            color: #555;
+        .restaurant-name {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .restaurant-name:hover {
+            text-decoration: underline;
+        }
+        
+        .external-link-icon {
+            width: 14px;
+            height: 14px;
+            margin-left: 4px;
+        }
+        
+        .city-tag {
             display: inline-block;
+            background-color: #f3f4f6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--secondary-text);
+            margin-right: 4px;
+        }
+        
+        .restaurant-address {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        
+        .restaurant-distance {
+            color: var(--secondary-text);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--secondary-text);
             cursor: pointer;
+            padding: 4px;
         }
         
-        .directions-btn {
-            background-color: #f8e8e8;
-            color: #c42626;
+        .restaurant-details {
+            padding: 0 16px 16px;
+            display: none;
         }
         
-        .japan-icon {
-            width: 24px;
-            height: 24px;
-            vertical-align: middle;
-            margin-right: 5px;
+        .restaurant-notes {
+            color: var(--secondary-text);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        
+        .menu-examples {
+            background-color: #f9fafb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 3px solid #e5e7eb;
+        }
+        
+        .menu-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .menu-item {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .japanese-text {
+            font-weight: bold;
+        }
+        
+        .translation {
+            color: var(--secondary-text);
+            font-style: italic;
+            margin-left: 6px;
+        }
+        
+        .directions-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #fef2f2;
+            color: var(--primary-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .directions-link:hover {
+            background-color: #fee2e2;
+        }
+        
+        .icon {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
         }
         
         .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #c42626;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin-right: 8px;
             display: none;
         }
         
@@ -219,28 +271,51 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Større touch-targets for iPhone */
+        @media (max-width: 768px) {
+            button {
+                padding: 14px 20px; 
+                font-size: 1.1rem;
+            }
+            
+            .restaurant-card {
+                margin-bottom: 20px;
+            }
+            
+            .restaurant-card-header {
+                padding: 18px 16px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Glutenfri Japan</h1>
-    <h2>Finn glutenfrie restauranter i Osaka, Kyoto og Tokyo</h2>
+    <header>
+        <h1>Glutenfri Japan</h1>
+        <h2>Finn glutenfrie restauranter i Osaka, Kyoto og Tokyo</h2>
+    </header>
     
-    <div class="filter-controls">
+    <div class="filter-container">
         <select id="city-filter">
             <option value="all">Alle byer</option>
             <option value="Tokyo">Tokyo</option>
             <option value="Kyoto">Kyoto</option>
             <option value="Osaka">Osaka</option>
         </select>
-        <button id="filter-btn">Filtrer</button>
     </div>
     
-    <button id="find-closest-btn" class="action-button">
-        <span class="japan-icon">📍</span> Finn nærmeste restaurant
+    <button id="find-nearest-btn" class="find-nearest-btn">
+        <div id="loading-spinner" class="loading-spinner"></div>
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Finn nærmeste restaurant
     </button>
     
-    <div id="loading-spinner" class="loading-spinner"></div>
-    <div id="status-message" class="status">Velg en by eller finn nærmeste restaurant</div>
+    <div id="error-message" class="error-message"></div>
+    
+    <div id="status-message" class="status-message">Velg en by eller finn nærmeste restaurant</div>
     
     <div id="restaurants-container"></div>
     
@@ -253,6 +328,8 @@
                     address: "1-25-5 Atago, Minato Ward, Tokyo 105-0002",
                     city: "Tokyo",
                     notes: "100% glutenfri restaurant (GIG-sertifisert), trolig den mest kjente glutenfrie restauranten i hele Japan. Var den første glutenfrie restauranten i Asia sertifisert av Gluten Intolerance Group.",
+                    lat: 35.6603,
+                    lng: 139.7511,
                     menuItems: [
                         { japanese: "天ぷら", translation: "Tempura" },
                         { japanese: "お好み焼き", translation: "Okonomiyaki" }
@@ -263,6 +340,8 @@
                     address: "1-1-20 Uehara, Shibuya, Tokyo",
                     city: "Tokyo",
                     notes: "Helt glutenfritt spisested i Shibuya-området. Spesielt kjent for å servere retter som ellers er vanskelig å finne uten gluten – burgere, pizza, ramen, crêpes, karaage (fritert kylling), tempura, osv. Regnes som et av de tryggeste stedene for cøliakere i Tokyo (ingen risiko for krysskontaminering).",
+                    lat: 35.6697,
+                    lng: 139.6799,
                     menuItems: [
                         { japanese: "唐揚げ", translation: "Karaage (fritert kylling)" },
                         { japanese: "グルテンフリーピザ", translation: "Glutenfri pizza" }
@@ -273,6 +352,8 @@
                     address: "Tokyo Ramen Street, Tokyo Station",
                     city: "Tokyo",
                     notes: "Anerkjent ramen-restaurant på Tokyo Ramen Street (Tokyo stasjon) som tilbyr en egen glutenfri shio-ramen laget med brunris-nudler. Både suppen og ingrediensene i denne retten er glutenfrie. Be om at de koker nudlene i en separat gryte for å unngå spor av hvete. Merk at dette er den eneste glutenfrie retten på menyen her.",
+                    lat: 35.6812,
+                    lng: 139.7671,
                     menuItems: [
                         { japanese: "グルテンフリー塩ラーメン", translation: "Glutenfri shio-ramen" },
                         { japanese: "玄米麺", translation: "Brunrisnudler" }
@@ -283,6 +364,8 @@
                     address: "Shibuya, Tokyo (ca. 7 min gange fra Shibuya stasjon)",
                     city: "Tokyo",
                     notes: "Miso-ramen spesialist i Shibuya med glutenfrie alternativer. Velg brunrisnudler i stedet for vanlige nudler. De tilbyr også glutenfri gyoza (dumplings) og karaage (fritert kylling). NB: Noen av de andre ramenvariantene har ingredienser med hvete.",
+                    lat: 35.6580,
+                    lng: 139.7016,
                     menuItems: [
                         { japanese: "玄米麺みそラーメン", translation: "Miso-ramen med brunrisnudler" },
                         { japanese: "グルテンフリー餃子", translation: "Glutenfri gyoza (dumplings)" }
@@ -293,6 +376,8 @@
                     address: "8-15-2 Ginza, Chūō-ku, Tokyo (nær Tsukijishijō stasjon)",
                     city: "Tokyo",
                     notes: "Liten spesialrestaurant i Ginza som utelukkende serverer glutenfri kushiage (kushikatsu) – forskjellige ingredienser panert og fritert på spidd. Omakase-smaksmeny bestående av et utvalg glutenfrie frityrspyd med forretter og dessert. Kun 8 sitteplasser og tar kun imot gjester med reservasjon.",
+                    lat: 35.6694,
+                    lng: 139.7649,
                     menuItems: [
                         { japanese: "グルテンフリー串揚げ", translation: "Glutenfri kushiage (frityrspyd)" },
                         { japanese: "おまかせコース", translation: "Omakase-meny (smaksmeny)" }
@@ -305,6 +390,8 @@
                     address: "40 Kamei-chō, Higashiyama-ku, Kyoto (i Gion-området)",
                     city: "Kyoto",
                     notes: "Kyotos (og muligens hele Japans) eneste dedikerte 100% glutenfrie ramen-restaurant. Også hel-vegansk. Du kan nyte flere varianter av ramen (basert på soyamelk), glutenfri gyoza, soyakroketter og til og med glutenfri dessert. Svært populært, så kom tidlig eller vær forberedt på å stå i kø.",
+                    lat: 35.0037,
+                    lng: 135.7780,
                     menuItems: [
                         { japanese: "豆乳ラーメン", translation: "Soyamelk-ramen" },
                         { japanese: "グルテンフリー餃子", translation: "Glutenfri gyoza" }
@@ -315,6 +402,8 @@
                     address: "Kawaramachi/Shinkyogoku-området, Kyoto",
                     city: "Kyoto",
                     notes: "Moderne ramen-restaurant kjent for glutenfrie nudler. Eierens datter har cøliaki. Nudler laget av f.eks. soyabønner eller konjakrot, og disse kokes i en egen seksjon av kjelen for å unngå krysskontaminering. Får strålende omtaler.",
+                    lat: 35.0056,
+                    lng: 135.7681,
                     menuItems: [
                         { japanese: "ゼスティースパイシーラーメン", translation: "Zesty Spicy Ramen" },
                         { japanese: "こんにゃく麺", translation: "Konjaknudler" }
@@ -325,6 +414,8 @@
                     address: "Daimonji-cho 43-2, Nakagyō-ku, Kyoto",
                     city: "Kyoto",
                     notes: "Autentisk, familiedrevet sushi-restaurant (over 60 år gammel) med glutenfri forståelse. Tilbyr glutenfri soyasaus og unngår ingredienser som inneholder gluten. Mange regner dette som en av de beste sushi-opplevelsene i Kyoto. Reservasjon anbefales, og oppgi gjerne at du trenger glutenfri tilpasning når du booker.",
+                    lat: 35.0116,
+                    lng: 135.7560,
                     menuItems: [
                         { japanese: "刺身盛り合わせ", translation: "Sashimi-utvalg" },
                         { japanese: "グルテンフリー醤油", translation: "Glutenfri soyasaus" }
@@ -335,6 +426,8 @@
                     address: "Matsuyachō 35-1, Nakagyō-ku, Kyoto (nær Kyoto Gyoen/nord for sentrum)",
                     city: "Kyoto",
                     notes: "Bitteliten, autentisk soba-restaurant drevet av én mann (Toru) som gjør alt selv. Alle sobanudlene er 100% bokhvete (juwari soba) og dermed naturlig glutenfrie. Toru-san er svært kunnskapsrik om cøliaki og garanterer glutenfrihet ved å kjøpe og male bokhveten selv. Han har glutenfri soyasaus tilgjengelig. Kun lunsjåpent og tar ikke reservasjoner, så du må regne med ca. 30 min kø.",
+                    lat: 35.0216,
+                    lng: 135.7631,
                     menuItems: [
                         { japanese: "十割蕎麦", translation: "Juwari soba (100% bokhvetenudler)" },
                         { japanese: "グルテンフリー醤油", translation: "Glutenfri soyasaus" }
@@ -345,6 +438,8 @@
                     address: "Sagatenryuji Tsukurimichicho 31, Ukyo-ku, Kyoto (Arashiyama)",
                     city: "Kyoto",
                     notes: "Tradisjonell restaurant i idylliske Arashiyama som er både halal-orientert og cøliaki-vennlig. Kjent for at de kan tilberede glutenfri tempura. Med forhåndsreservasjon kan man bestille et eget glutenfritt kaiseki-inspirert settmeny. Restauranten ligger i en vakker hage. NB: Få gjerne en japansktalende til å ringe og ordne reservasjon.",
+                    lat: 35.0176,
+                    lng: 135.6781,
                     menuItems: [
                         { japanese: "グルテンフリー天ぷら", translation: "Glutenfri tempura" },
                         { japanese: "グルテンフリー会席", translation: "Glutenfri kaiseki-meny" }
@@ -357,6 +452,8 @@
                     address: "3-4-5 Ebisuhigashi, Naniwa-ku, Osaka (Shinsekai-området, nær Tsūtenkaku-tårnet)",
                     city: "Osaka",
                     notes: "Hel-vegansk og glutenfri restaurant i Shinsekai-området (en bakgate like ved Tsūtenkaku-tårnet). Spesialiserer seg på autentiske Osaka-retter gjort veganske og glutenfrie – takoyaki, kushikatsu og ramen, alt uten gluten.",
+                    lat: 34.6517,
+                    lng: 135.5060,
                     menuItems: [
                         { japanese: "グルテンフリーたこ焼き", translation: "Glutenfri takoyaki" },
                         { japanese: "グルテンフリー串カツ", translation: "Glutenfri kushikatsu" }
@@ -367,6 +464,8 @@
                     address: "Osaka Ekimae 4th Building B1F, 1-11-4 Umeda, Kita-ku, Osaka (i kjelleren av bygg 4 ved Osaka stasjon)",
                     city: "Osaka",
                     notes: "100% glutenfritt og vegansk spisested sentralt i Umeda, nær Osaka stasjon. Også kjent som 'Vegan & GlutenFree Osaka'. Menyen dekker et bredt spekter av japanske favoritter: ramen, okonomiyaki, takoyaki, gyoza og temaki-sushi.",
+                    lat: 34.7025,
+                    lng: 135.4959,
                     menuItems: [
                         { japanese: "豚骨風ラーメン", translation: "Tonkotsu-stil veggie-ramen" },
                         { japanese: "お好み焼き", translation: "Okonomiyaki" }
@@ -377,6 +476,8 @@
                     address: "Shinsaibashi, Osaka (B1 bak Nikko Hotel, 2 min gange fra Shinsaibashi stasjon)",
                     city: "Osaka",
                     notes: "Nyåpnet sushi-restaurant (etablert sep. 2024) i Shinsaibashi som er både helt glutenfri og vegansk. Bredt utvalg nigiri og maki laget i shōjin ryōri-stil (vegansk), men viktigst: helt uten gluten. Hvit inngang i kjelleretasjen (B1) bak Nikko Hotel.",
+                    lat: 34.6717,
+                    lng: 135.5023,
                     menuItems: [
                         { japanese: "精進寿司盛り合わせ", translation: "Shojin sushi-utvalg" },
                         { japanese: "グルテンフリー巻き寿司", translation: "Glutenfrie maki" }
@@ -387,6 +488,8 @@
                     address: "1-15-24 Higashishinsaibashi, Chūō-ku, Osaka (nær Dōtonbori, Shinsaibashi området)",
                     city: "Osaka",
                     notes: "Lite vegansk gatekjøkken i Shinsaibashi som spesialiserer seg på Osakas klassiske street food. Takoyaki lages her i en glutenfri røre, toppet med autentisk takoyakisaus (også glutenfri). I tillegg serverer de kushikatsu – fritert mat på spyd – med ulike sausparinger. Alt på menyen er vegansk og glutenfritt. Begrenset med sitteplasser (mest en bar disk).",
+                    lat: 34.6737,
+                    lng: 135.5063,
                     menuItems: [
                         { japanese: "グルテンフリーたこ焼き", translation: "Glutenfri takoyaki" },
                         { japanese: "グルテンフリー串カツ", translation: "Glutenfri kushikatsu" }
@@ -397,6 +500,8 @@
                     address: "2-5-2 Kawaramachi, Chūō-ku, Osaka (ca. 10 min gange fra Kitahama stasjon)",
                     city: "Osaka",
                     notes: "Familiedrevet vegansk ramen-kafé i Osaka sentrum (Kawaramachi-området, nær Kitahama). Glutenfritt alternativ: Bytt til glassnudler i stedet for hvete-nudler. Ramen'en har fått skryt for sin fyldige smak og rike grønnsaksbuljong. NB: Alohana holder kun åpent i helgene noen få timer.",
+                    lat: 34.6877,
+                    lng: 135.5123,
                     menuItems: [
                         { japanese: "味噌ラーメン(春雨麺)", translation: "Miso-ramen med glassnudler" },
                         { japanese: "春雨麺ベジラーメン", translation: "Veggie-ramen med glassnudler" }
@@ -405,38 +510,29 @@
             ]
         };
         
-        // For å lagre geolokasjon
+        // DOM-elementer
+        const cityFilter = document.getElementById('city-filter');
+        const findNearestBtn = document.getElementById('find-nearest-btn');
+        const statusMessage = document.getElementById('status-message');
+        const errorMessage = document.getElementById('error-message');
+        const restaurantsContainer = document.getElementById('restaurants-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        
+        // Brukerens posisjon
         let userPosition = null;
         
         // Hent alle restauranter
         function getAllRestaurants() {
-            return [...cityRestaurants.Tokyo, ...cityRestaurants.Kyoto, ...cityRestaurants.Osaka];
+            return [
+                ...cityRestaurants.Tokyo,
+                ...cityRestaurants.Kyoto,
+                ...cityRestaurants.Osaka
+            ];
         }
         
-        // Beregn koordinater (i en full versjon ville dette brukt en geocoding service)
-        // Dette er en forenklet simulering for demo
-        function simulateGeocode(address, city) {
-            // Basert på byens omtrentlige koordinater med små variasjoner
-            const baseLoc = {
-                "Tokyo": { lat: 35.6762, lng: 139.6503 },
-                "Kyoto": { lat: 35.0116, lng: 135.7681 },
-                "Osaka": { lat: 34.6937, lng: 135.5023 }
-            };
-            
-            // Legg til tilfeldig variasjon for å simulere ulike steder i byen
-            const offset = 0.02; // ~2km
-            const randomLat = (Math.random() * offset * 2) - offset;
-            const randomLng = (Math.random() * offset * 2) - offset;
-            
-            return {
-                lat: baseLoc[city].lat + randomLat,
-                lng: baseLoc[city].lng + randomLng
-            };
-        }
-        
-        // Beregn avstanden mellom to koordinater i km (Haversine formel)
+        // Beregn avstand mellom to koordinater (Haversine-formel)
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radius av jorden i km
+            const R = 6371; // Jordens radius i km
             const dLat = deg2rad(lat2 - lat1);
             const dLon = deg2rad(lon2 - lon1);
             const a = 
@@ -461,48 +557,49 @@
             }
         }
         
-        // Vis restauranter filtrert etter by
+        // Vis restauranter basert på valgt by
         function displayRestaurantsByCity() {
-            const selectedCity = document.getElementById('city-filter').value;
-            const statusElement = document.getElementById('status-message');
-            const container = document.getElementById('restaurants-container');
-            container.innerHTML = '';
+            const selectedCity = cityFilter.value;
+            restaurantsContainer.innerHTML = '';
             
             let restaurantsToShow = [];
             
             if (selectedCity === 'all') {
                 restaurantsToShow = getAllRestaurants();
-                statusElement.textContent = "Viser alle restauranter";
+                statusMessage.textContent = "Viser alle restauranter";
             } else {
                 restaurantsToShow = cityRestaurants[selectedCity] || [];
-                statusElement.textContent = `Viser restauranter i ${selectedCity}`;
+                statusMessage.textContent = `Viser restauranter i ${selectedCity}`;
             }
             
             if (restaurantsToShow.length === 0) {
-                statusElement.textContent = "Ingen restauranter funnet";
+                statusMessage.textContent = "Ingen restauranter funnet";
                 return;
             }
             
-            // Beregn koordinater for hver restaurant (hvis ikke allerede gjort)
-            restaurantsToShow.forEach(restaurant => {
-                if (!restaurant.lat || !restaurant.lng) {
-                    const coords = simulateGeocode(restaurant.address, restaurant.city);
-                    restaurant.lat = coords.lat;
-                    restaurant.lng = coords.lng;
-                }
-            });
+            // Hvis brukerens posisjon er kjent, beregn avstand
+            if (userPosition) {
+                restaurantsToShow.forEach(restaurant => {
+                    restaurant.distance = calculateDistance(
+                        userPosition.lat, userPosition.lng,
+                        restaurant.lat, restaurant.lng
+                    );
+                });
+                
+                // Sorter etter avstand
+                restaurantsToShow.sort((a, b) => a.distance - b.distance);
+            }
             
             // Vis restauranter
             displayRestaurantCards(restaurantsToShow);
         }
         
         // Finn nærmeste restaurant basert på brukerens posisjon
-        function findClosestRestaurant() {
-            const statusElement = document.getElementById('status-message');
-            const loadingSpinner = document.getElementById('loading-spinner');
-            
-            statusElement.textContent = "Henter din posisjon...";
-            loadingSpinner.style.display = 'block';
+        function findNearestRestaurant() {
+            errorMessage.style.display = 'none';
+            loadingSpinner.style.display = 'inline-block';
+            findNearestBtn.disabled = true;
+            statusMessage.textContent = "Henter din posisjon...";
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -512,19 +609,10 @@
                             lng: position.coords.longitude
                         };
                         
-                        statusElement.textContent = "Beregner avstander...";
+                        statusMessage.textContent = "Beregner avstander...";
                         
                         // Hent alle restauranter
                         let allRestaurants = getAllRestaurants();
-                        
-                        // Beregn koordinater for hver restaurant hvis ikke allerede gjort
-                        allRestaurants.forEach(restaurant => {
-                            if (!restaurant.lat || !restaurant.lng) {
-                                const coords = simulateGeocode(restaurant.address, restaurant.city);
-                                restaurant.lat = coords.lat;
-                                restaurant.lng = coords.lng;
-                            }
-                        });
                         
                         // Beregn avstand til hver restaurant
                         allRestaurants.forEach(restaurant => {
@@ -539,26 +627,30 @@
                         
                         // Vis resultater
                         displayRestaurantCards(allRestaurants);
-                        statusElement.textContent = "Restauranter sortert etter avstand:";
+                        statusMessage.textContent = "Restauranter sortert etter avstand:";
                         loadingSpinner.style.display = 'none';
+                        findNearestBtn.disabled = false;
                     },
                     function(error) {
                         loadingSpinner.style.display = 'none';
+                        findNearestBtn.disabled = false;
                         
                         switch(error.code) {
                             case error.PERMISSION_DENIED:
-                                statusElement.textContent = "Du må gi tillatelse til posisjonstjenester for å bruke denne funksjonen.";
+                                errorMessage.textContent = "Du må gi tillatelse til posisjonstjenester for å bruke denne funksjonen.";
                                 break;
                             case error.POSITION_UNAVAILABLE:
-                                statusElement.textContent = "Posisjonsinformasjon er utilgjengelig.";
+                                errorMessage.textContent = "Posisjonsinformasjon er utilgjengelig.";
                                 break;
                             case error.TIMEOUT:
-                                statusElement.textContent = "Tidsavbrudd for posisjonsforespørsel.";
+                                errorMessage.textContent = "Tidsavbrudd for posisjonsforespørsel.";
                                 break;
                             case error.UNKNOWN_ERROR:
-                                statusElement.textContent = "En ukjent feil oppstod.";
+                                errorMessage.textContent = "En ukjent feil oppstod.";
                                 break;
                         }
+                        
+                        errorMessage.style.display = 'block';
                     },
                     {
                         enableHighAccuracy: true,
@@ -567,55 +659,199 @@
                     }
                 );
             } else {
-                statusElement.textContent = "Geolokasjon støttes ikke av denne nettleseren.";
+                errorMessage.textContent = "Geolokasjon støttes ikke av denne nettleseren.";
+                errorMessage.style.display = 'block';
                 loadingSpinner.style.display = 'none';
+                findNearestBtn.disabled = false;
             }
         }
         
         // Vis restaurantkort
         function displayRestaurantCards(restaurants) {
-            const container = document.getElementById('restaurants-container');
-            container.innerHTML = '';
+            restaurantsContainer.innerHTML = '';
             
             restaurants.forEach(restaurant => {
+                // Opprett kort
                 const card = document.createElement('div');
                 card.className = 'restaurant-card';
                 
-                const nameElement = document.createElement('a');
-                nameElement.className = 'restaurant-name';
-                nameElement.textContent = restaurant.name;
-                nameElement.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
-                nameElement.target = '_blank';
+                // Opprett header
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'restaurant-card-header';
                 
+                // Venstre side av header (navn, by, adresse)
+                const headerInfo = document.createElement('div');
+                
+                // Restaurantnavn med lenke
+                const nameLink = document.createElement('a');
+                nameLink.className = 'restaurant-name';
+                nameLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                nameLink.target = '_blank';
+                nameLink.textContent = restaurant.name;
+                
+                // Ikon for ekstern lenke
+                const externalIcon = document.createElement('svg');
+                externalIcon.className = 'external-link-icon';
+                externalIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                externalIcon.setAttribute('viewBox', '0 0 24 24');
+                externalIcon.setAttribute('fill', 'none');
+                externalIcon.setAttribute('stroke', 'currentColor');
+                externalIcon.setAttribute('stroke-width', '2');
+                externalIcon.setAttribute('stroke-linecap', 'round');
+                externalIcon.setAttribute('stroke-linejoin', 'round');
+                externalIcon.innerHTML = '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>';
+                nameLink.appendChild(externalIcon);
+                
+                headerInfo.appendChild(nameLink);
+                
+                // By-tag
                 const cityTag = document.createElement('span');
                 cityTag.className = 'city-tag';
                 cityTag.textContent = restaurant.city;
+                headerInfo.appendChild(cityTag);
                 
-                const addressElement = document.createElement('div');
-                addressElement.className = 'address';
-                addressElement.textContent = restaurant.address;
+                // Adresse
+                const address = document.createElement('div');
+                address.className = 'restaurant-address';
+                address.textContent = restaurant.address;
+                headerInfo.appendChild(address);
                 
-                const notesElement = document.createElement('div');
-                notesElement.className = 'notes';
-                notesElement.textContent = restaurant.notes || '';
+                // Avstand (hvis tilgjengelig)
+                if (restaurant.distance !== undefined) {
+                    const distance = document.createElement('div');
+                    distance.className = 'restaurant-distance';
+                    
+                    // Ikon for avstand
+                    const mapIcon = document.createElement('svg');
+                    mapIcon.className = 'icon';
+                    mapIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                    mapIcon.setAttribute('viewBox', '0 0 24 24');
+                    mapIcon.setAttribute('fill', 'none');
+                    mapIcon.setAttribute('stroke', 'currentColor');
+                    mapIcon.setAttribute('stroke-width', '2');
+                    mapIcon.setAttribute('stroke-linecap', 'round');
+                    mapIcon.setAttribute('stroke-linejoin', 'round');
+                    mapIcon.innerHTML = '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>';
+                    
+                    distance.appendChild(mapIcon);
+                    distance.appendChild(document.createTextNode(formatDistance(restaurant.distance)));
+                    headerInfo.appendChild(distance);
+                }
                 
-                let content = document.createElement('div');
-                content.appendChild(nameElement);
-                content.appendChild(cityTag);
-                content.appendChild(addressElement);
-                content.appendChild(notesElement);
+                // Høyre side av header (utvid/skjul-knapp)
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'toggle-btn';
+                toggleBtn.setAttribute('aria-label', 'Vis detaljer');
                 
-                // Legg til menyeksempler hvis tilgjengelig
+                // Ikon for utvid
+                const chevronIcon = document.createElement('svg');
+                chevronIcon.className = 'icon';
+                chevronIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                chevronIcon.setAttribute('viewBox', '0 0 24 24');
+                chevronIcon.setAttribute('fill', 'none');
+                chevronIcon.setAttribute('stroke', 'currentColor');
+                chevronIcon.setAttribute('stroke-width', '2');
+                chevronIcon.setAttribute('stroke-linecap', 'round');
+                chevronIcon.setAttribute('stroke-linejoin', 'round');
+                chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+                
+                toggleBtn.appendChild(chevronIcon);
+                
+                // Legg til header-elementer
+                cardHeader.appendChild(headerInfo);
+                cardHeader.appendChild(toggleBtn);
+                card.appendChild(cardHeader);
+                
+                // Detaljer (skjult som standard)
+                const details = document.createElement('div');
+                details.className = 'restaurant-details';
+                
+                // Noter
+                const notes = document.createElement('div');
+                notes.className = 'restaurant-notes';
+                notes.textContent = restaurant.notes;
+                details.appendChild(notes);
+                
+                // Menyeksempler
                 if (restaurant.menuItems && restaurant.menuItems.length > 0) {
                     const menuExamples = document.createElement('div');
                     menuExamples.className = 'menu-examples';
                     
                     const menuTitle = document.createElement('div');
-                    menuTitle.style.fontWeight = 'bold';
-                    menuTitle.style.marginBottom = '5px';
+                    menuTitle.className = 'menu-title';
                     menuTitle.textContent = 'Glutenfrie alternativer:';
                     menuExamples.appendChild(menuTitle);
                     
                     restaurant.menuItems.forEach(item => {
                         const menuItem = document.createElement('div');
                         menuItem.className = 'menu-item';
+                        
+                        const japaneseText = document.createElement('span');
+                        japaneseText.className = 'japanese-text';
+                        japaneseText.textContent = item.japanese;
+                        
+                        const translation = document.createElement('span');
+                        translation.className = 'translation';
+                        translation.textContent = item.translation;
+                        
+                        menuItem.appendChild(japaneseText);
+                        menuItem.appendChild(translation);
+                        menuExamples.appendChild(menuItem);
+                    });
+                    
+                    details.appendChild(menuExamples);
+                }
+                
+                // Veibeskrivelse-lenke
+                const directionsLink = document.createElement('a');
+                directionsLink.className = 'directions-link';
+                directionsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                directionsLink.target = '_blank';
+                
+                // Ikon for veibeskrivelse
+                const navIcon = document.createElement('svg');
+                navIcon.className = 'icon';
+                navIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                navIcon.setAttribute('viewBox', '0 0 24 24');
+                navIcon.setAttribute('fill', 'none');
+                navIcon.setAttribute('stroke', 'currentColor');
+                navIcon.setAttribute('stroke-width', '2');
+                navIcon.setAttribute('stroke-linecap', 'round');
+                navIcon.setAttribute('stroke-linejoin', 'round');
+                navIcon.innerHTML = '<polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>';
+                
+                directionsLink.appendChild(navIcon);
+                directionsLink.appendChild(document.createTextNode('Veibeskrivelse'));
+                details.appendChild(directionsLink);
+                
+                card.appendChild(details);
+                
+                // Legg til kortet i containeren
+                restaurantsContainer.appendChild(card);
+                
+                // Legg til klikkhåndtering for utvid/skjul
+                toggleBtn.addEventListener('click', function() {
+                    const isExpanded = details.style.display === 'block';
+                    details.style.display = isExpanded ? 'none' : 'block';
+                    
+                    // Endre ikon
+                    if (isExpanded) {
+                        chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+                        toggleBtn.setAttribute('aria-label', 'Vis detaljer');
+                    } else {
+                        chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+                        toggleBtn.setAttribute('aria-label', 'Skjul detaljer');
+                    }
+                });
+            });
+        }
+        
+        // Legg til event listeners
+        cityFilter.addEventListener('change', displayRestaurantsByCity);
+        findNearestBtn.addEventListener('click', findNearestRestaurant);
+        
+        // Vis alle restauranter ved oppstart
+        displayRestaurantsByCity();
+    </script>
+</body>
+</html>
