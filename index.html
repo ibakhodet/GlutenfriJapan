@@ -197,54 +197,6 @@
             color: #c42626;
         }
         
-        .bulk-input {
-            margin-top: 30px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        textarea {
-            width: 100%;
-            height: 150px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            box-sizing: border-box;
-        }
-        
-        .collapsible {
-            cursor: pointer;
-            padding: 10px;
-            width: 100%;
-            text-align: left;
-            background-color: #f2f2f2;
-            border: none;
-            border-radius: 4px;
-            outline: none;
-            font-size: 1em;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .active, .collapsible:hover {
-            background-color: #e6e6e6;
-        }
-        
-        .content {
-            padding: 0 10px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-            background-color: white;
-        }
-        
         .japan-icon {
             width: 24px;
             height: 24px;
@@ -291,25 +243,6 @@
     <div id="status-message" class="status">Velg en by eller finn nærmeste restaurant</div>
     
     <div id="restaurants-container"></div>
-    
-    <button class="collapsible">Legg til restauranter fra TripAdvisor <span>+</span></button>
-    <div class="content">
-        <div class="bulk-input">
-            <p>Lim inn restaurantnavn og adresser fra TripAdvisor eller andre kilder:</p>
-            <textarea id="bulk-input" placeholder="Restaurant Navn
-Adresse, Tokyo
-(tom linje mellom hver restaurant)
-
-Annen Restaurant
-Adresse, Kyoto"></textarea>
-            <select id="bulk-city">
-                <option value="Tokyo">Tokyo</option>
-                <option value="Kyoto">Kyoto</option>
-                <option value="Osaka">Osaka</option>
-            </select>
-            <button id="add-bulk-btn">Legg til restauranter</button>
-        </div>
-    </div>
     
     <script>
         // Restaurantdata for hver by
@@ -623,4 +556,66 @@ Adresse, Kyoto"></textarea>
                                 statusElement.textContent = "Tidsavbrudd for posisjonsforespørsel.";
                                 break;
                             case error.UNKNOWN_ERROR:
-                                statusElement.textContent = "En
+                                statusElement.textContent = "En ukjent feil oppstod.";
+                                break;
+                        }
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                statusElement.textContent = "Geolokasjon støttes ikke av denne nettleseren.";
+                loadingSpinner.style.display = 'none';
+            }
+        }
+        
+        // Vis restaurantkort
+        function displayRestaurantCards(restaurants) {
+            const container = document.getElementById('restaurants-container');
+            container.innerHTML = '';
+            
+            restaurants.forEach(restaurant => {
+                const card = document.createElement('div');
+                card.className = 'restaurant-card';
+                
+                const nameElement = document.createElement('a');
+                nameElement.className = 'restaurant-name';
+                nameElement.textContent = restaurant.name;
+                nameElement.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+                nameElement.target = '_blank';
+                
+                const cityTag = document.createElement('span');
+                cityTag.className = 'city-tag';
+                cityTag.textContent = restaurant.city;
+                
+                const addressElement = document.createElement('div');
+                addressElement.className = 'address';
+                addressElement.textContent = restaurant.address;
+                
+                const notesElement = document.createElement('div');
+                notesElement.className = 'notes';
+                notesElement.textContent = restaurant.notes || '';
+                
+                let content = document.createElement('div');
+                content.appendChild(nameElement);
+                content.appendChild(cityTag);
+                content.appendChild(addressElement);
+                content.appendChild(notesElement);
+                
+                // Legg til menyeksempler hvis tilgjengelig
+                if (restaurant.menuItems && restaurant.menuItems.length > 0) {
+                    const menuExamples = document.createElement('div');
+                    menuExamples.className = 'menu-examples';
+                    
+                    const menuTitle = document.createElement('div');
+                    menuTitle.style.fontWeight = 'bold';
+                    menuTitle.style.marginBottom = '5px';
+                    menuTitle.textContent = 'Glutenfrie alternativer:';
+                    menuExamples.appendChild(menuTitle);
+                    
+                    restaurant.menuItems.forEach(item => {
+                        const menuItem = document.createElement('div');
+                        menuItem.className = 'menu-item';
