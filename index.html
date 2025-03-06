@@ -146,10 +146,15 @@
         }
         
         .restaurant-card-header {
-            padding: 16px;
+            padding: 16px 16px 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+        }
+        
+        .header-info {
+            flex: 1;
+            padding-right: 10px;
         }
         
         .restaurant-name {
@@ -198,15 +203,30 @@
         }
         
         .toggle-btn {
-            background: none;
-            border: none;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
             color: var(--secondary-text);
             cursor: pointer;
-            padding: 4px;
+            padding: 6px;
+            border-radius: 6px;
+            min-width: 32px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .restaurant-preview {
+            padding: 0 16px 12px 16px;
+            border-bottom: 1px dashed #eee;
         }
         
         .restaurant-details {
-            padding: 0 16px 16px;
+            padding: 12px 16px 16px 16px;
             display: none;
         }
         
@@ -214,6 +234,7 @@
             color: var(--secondary-text);
             font-size: 0.9rem;
             margin-bottom: 12px;
+            line-height: 1.4;
         }
         
         .menu-examples {
@@ -233,16 +254,19 @@
         .menu-item {
             margin-bottom: 6px;
             font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
         }
         
         .japanese-text {
             font-weight: bold;
+            margin-right: 6px;
         }
         
         .translation {
             color: var(--secondary-text);
             font-style: italic;
-            margin-left: 6px;
         }
         
         .directions-link {
@@ -294,7 +318,27 @@
             }
             
             .restaurant-card-header {
-                padding: 18px 16px;
+                padding: 18px 16px 12px 16px;
+            }
+            
+            .toggle-btn {
+                min-width: 36px;
+                min-height: 36px;
+            }
+        }
+        
+        .show-more-text {
+            display: none;
+        }
+        
+        @media (max-width: 480px) {
+            .show-more-icon {
+                display: none;
+            }
+            
+            .show-more-text {
+                display: inline;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -713,6 +757,7 @@
                 
                 // Venstre side av header (navn, by, adresse)
                 const headerInfo = document.createElement('div');
+                headerInfo.className = 'header-info';
                 
                 // Restaurantnavn med lenke
                 const nameLink = document.createElement('a');
@@ -782,11 +827,11 @@
                 // Høyre side av header (utvid/skjul-knapp)
                 const toggleBtn = document.createElement('button');
                 toggleBtn.className = 'toggle-btn';
-                toggleBtn.setAttribute('aria-label', 'Vis detaljer');
+                toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
                 
                 // Ikon for utvid
                 const chevronIcon = document.createElement('svg');
-                chevronIcon.className = 'icon';
+                chevronIcon.className = 'icon show-more-icon';
                 chevronIcon.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
                 chevronIcon.setAttribute('viewBox', '0 0 24 24');
                 chevronIcon.setAttribute('fill', 'none');
@@ -796,32 +841,32 @@
                 chevronIcon.setAttribute('stroke-linejoin', 'round');
                 chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
                 
+                // Tekstalternativ for små skjermer
+                const showMoreText = document.createElement('span');
+                showMoreText.className = 'show-more-text';
+                showMoreText.textContent = 'Mer';
+                
                 toggleBtn.appendChild(chevronIcon);
+                toggleBtn.appendChild(showMoreText);
                 
                 // Legg til header-elementer
                 cardHeader.appendChild(headerInfo);
                 cardHeader.appendChild(toggleBtn);
                 card.appendChild(cardHeader);
                 
-                // Detaljer (skjult som standard)
-                const details = document.createElement('div');
-                details.className = 'restaurant-details';
+                // Forhåndsvisning av glutenfrie alternativer (alltid synlig)
+                const preview = document.createElement('div');
+                preview.className = 'restaurant-preview';
                 
-                // Noter
-                const notes = document.createElement('div');
-                notes.className = 'restaurant-notes';
-                notes.textContent = restaurant.notes;
-                details.appendChild(notes);
-                
-                // Menyeksempler
+                // Glutenfrie alternativer
                 if (restaurant.menuItems && restaurant.menuItems.length > 0) {
-                    const menuExamples = document.createElement('div');
-                    menuExamples.className = 'menu-examples';
+                    const menuPreview = document.createElement('div');
+                    menuPreview.className = 'menu-examples';
                     
                     const menuTitle = document.createElement('div');
                     menuTitle.className = 'menu-title';
                     menuTitle.textContent = 'Glutenfrie alternativer:';
-                    menuExamples.appendChild(menuTitle);
+                    menuPreview.appendChild(menuTitle);
                     
                     restaurant.menuItems.forEach(item => {
                         const menuItem = document.createElement('div');
@@ -837,11 +882,23 @@
                         
                         menuItem.appendChild(japaneseText);
                         menuItem.appendChild(translation);
-                        menuExamples.appendChild(menuItem);
+                        menuPreview.appendChild(menuItem);
                     });
                     
-                    details.appendChild(menuExamples);
+                    preview.appendChild(menuPreview);
                 }
+                
+                card.appendChild(preview);
+                
+                // Detaljer (skjult som standard)
+                const details = document.createElement('div');
+                details.className = 'restaurant-details';
+                
+                // Noter
+                const notes = document.createElement('div');
+                notes.className = 'restaurant-notes';
+                notes.textContent = restaurant.notes;
+                details.appendChild(notes);
                 
                 // Veibeskrivelse-lenke med brukerens posisjon som startpunkt
                 const directionsLink = document.createElement('a');
@@ -877,13 +934,15 @@
                     const isExpanded = details.style.display === 'block';
                     details.style.display = isExpanded ? 'none' : 'block';
                     
-                    // Endre ikon
+                    // Endre ikon og tekst
                     if (isExpanded) {
                         chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Vis detaljer');
+                        toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
+                        showMoreText.textContent = 'Mer';
                     } else {
                         chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Skjul detaljer');
+                        toggleBtn.setAttribute('aria-label', 'Skjul informasjon');
+                        showMoreText.textContent = 'Skjul';
                     }
                 });
             });
