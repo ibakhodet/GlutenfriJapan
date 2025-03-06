@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Glutenfri Japan</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: rgba(0,0,0,0);
+        }
+        
+        h1 {
+            color: #c42626;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 1.2em;
+            text-align: center;
+            margin-top: 0;
+            font-weight: normal;
+        }
+        
+        .restaurant-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c42626;
+        }
+        
+        .restaurant-name {
+            font-weight: bold;
+            color: #c42626;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .restaurant-name:hover {
+            text-decoration: underline;
+        }
+        
+        .distance {
+            color: #666;
+            font-weight: bold;
+        }
+        
+        .address {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .notes {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .menu-examples {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 8px;
+            border-left: 3px solid #e0e0e0;
+        }
+        
+        .menu-item {
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .japanese-text {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .translation {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .city-tag {
+            display: inline-block;
+            background-color: #f2f2f2;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            color: #666;
+        }
+        
+        button {
+            background-color: #c42626;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+        
+        button:hover {
+            background-color: #d83b3b;
+        }
+        
+        /* Større touch-targets for iPhone */
+        @media (max-width: 768px) {
+            button {
+                padding: 14px 20px; 
+                font-size: 1.1em;
+            }
+            
+            .action-btn {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+            
+            /* Større avstand mellom elementer for lettere tapping */
+            .restaurant-card {
+                padding: 18px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        .action-button {
+            display: block;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 300px;
+        }
+        
+        .secondary-button {
+            background-color: #666;
+        }
+        
+        .filter-controls {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            font-size: 1em;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .restaurant-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .action-btn {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: #555;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .directions-btn {
+            background-color: #f8e8e8;
+            color: #c42626;
+        }
+        
+        .bulk-input {
+            margin-top: 30px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .collapsible {
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            background-color: #f2f2f2;
+            border: none;
+            border-radius: 4px;
+            outline: none;
+            font-size: 1em;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .active, .collapsible:hover {
+            background-color: #e6e6e6;
+        }
+        
+        .content {
+            padding: 0 10px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: white;
+        }
+        
+        .japan-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #c42626;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Glutenfri Japan</h1>
+    <h2>Finn glutenfrie restauranter i Osaka, Kyoto og Tokyo</h2>
+    
+    <div class="filter-controls">
+        <select id="city-filter">
+            <option value="all">Alle byer</option>
+            <option value="Tokyo">Tokyo</option>
+            <option value="Kyoto">Kyoto</option>
+            <option value="Osaka">Osaka</option>
+        </select>
+        <button id="filter-btn">Filtrer</button>
+    </div>
+    
+    <button id="find-closest-btn" class="action-button">
+        <span class="japan-icon">📍</span> Finn nærmeste restaurant
+    </button>
+    
+    <div id="loading-spinner" class="loading-spinner"></div>
+    <div id="status-message" class="status">Velg en by eller finn nærmeste restaurant</div>
+    
+    <div id="restaurants-container"></div>
+    
+    <button class="collapsible">Legg til restauranter fra TripAdvisor <span>+</span></button>
+    <div class="content">
+        <div class="bulk-input">
+            <p>Lim inn restaurantnavn og adresser fra TripAdvisor eller andre kilder:</p>
+            <textarea id="bulk-input" placeholder="Restaurant Navn
+Adresse, Tokyo
+(tom linje mellom hver restaurant)
+
+Annen Restaurant
+Adresse, Kyoto"></textarea>
+            <select id="bulk-city">
+                <option value="Tokyo">Tokyo</option>
+                <option value="Kyoto">Kyoto</option>
+                <option value="Osaka">Osaka</option>
+            </select>
+            <button id="add-bulk-btn">Legg til restauranter</button>
+        </div>
+    </div>
+    
+    <script>
+        // Restaurantdata for hver by
+        const cityRestaurants = {
+            "Tokyo": [
+                {
+                    name: "Gluten Free T's Kitchen",
+                    address: "1-25-5 Atago, Minato Ward, Tokyo 105-0002",
+                    city: "Tokyo",
+                    notes: "100% glutenfri restaurant (GIG-sertifisert), trolig den mest kjente glutenfrie restauranten i hele Japan. Var den første glutenfrie restauranten i Asia sertifisert av Gluten Intolerance Group.",
+                    menuItems: [
+                        { japanese: "天ぷら", translation: "Tempura" },
+                        { japanese: "お好み焼き", translation: "Okonomiyaki" }
+                    ]
+                },
+                {
+                    name: "Gluten Free Café Little Bird",
+                    address: "1-1-20 Uehara, Shibuya, Tokyo",
+                    city: "Tokyo",
+                    notes: "Helt glutenfritt spisested i Shibuya-området. Spesielt kjent for å servere retter som ellers er vanskelig å finne uten gluten – burgere, pizza, ramen, crêpes, karaage (fritert kylling), tempura, osv. Regnes som et av de tryggeste stedene for cøliakere i Tokyo (ingen risiko for krysskontaminering).",
+                    menuItems: [
+                        { japanese: "唐揚げ", translation: "Karaage (fritert kylling)" },
+                        { japanese: "グルテンフリーピザ", translation: "Glutenfri pizza" }
+                    ]
+                },
+                {
+                    name: "Soranoiro Nippon",
+                    address: "Tokyo Ramen Street, Tokyo Station",
+                    city: "Tokyo",
+                    notes: "Anerkjent ramen-restaurant på Tokyo Ramen Street (Tokyo stasjon) som tilbyr en egen glutenfri shio-ramen laget med brunris-nudler. Både suppen og ingrediensene i denne retten er glutenfrie. Be om at de koker nudlene i en separat gryte for å unngå spor av hvete. Merk at dette er den eneste glutenfrie retten på menyen her.",
+                    menuItems: [
+                        { japanese: "グルテンフリー塩ラーメン", translation: "Glutenfri shio-ramen" },
+                        { japanese: "玄米麺", translation: "Brunrisnudler" }
+                    ]
+                },
+                {
+                    name: "Shinbusakiya",
+                    address: "Shibuya, Tokyo (ca. 7 min gange fra Shibuya stasjon)",
+                    city: "Tokyo",
+                    notes: "Miso-ramen spesialist i Shibuya med glutenfrie alternativer. Velg brunrisnudler i stedet for vanlige nudler. De tilbyr også glutenfri gyoza (dumplings) og karaage (fritert kylling). NB: Noen av de andre ramenvariantene har ingredienser med hvete.",
+                    menuItems: [
+                        { japanese: "玄米麺みそラーメン", translation: "Miso-ramen med brunrisnudler" },
+                        { japanese: "グルテンフリー餃子", translation: "Glutenfri gyoza (dumplings)" }
+                    ]
+                },
+                {
+                    name: "Gluten Free Kushiage Sû",
+                    address: "8-15-2 Ginza, Chūō-ku, Tokyo (nær Tsukijishijō stasjon)",
+                    city: "Tokyo",
+                    notes: "Liten spesialrestaurant i Ginza som utelukkende serverer glutenfri kushiage (kushikatsu) – forskjellige ingredienser panert og fritert på spidd. Omakase-smaksmeny bestående av et utvalg glutenfrie frityrspyd med forretter og dessert. Kun 8 sitteplasser og tar kun imot gjester med reservasjon.",
+                    menuItems: [
+                        { japanese: "グルテンフリー串揚げ", translation: "Glutenfri kushiage (frityrspyd)" },
+                        { japanese: "おまかせコース", translation: "Omakase-meny (smaksmeny)" }
+                    ]
+                }
+            ],
+            "Kyoto": [
+                {
+                    name: "Gion Soy Milk Ramen",
+                    address: "40 Kamei-chō, Higashiyama-ku, Kyoto (i Gion-området)",
+                    city: "Kyoto",
+                    notes: "Kyotos (og muligens hele Japans) eneste dedikerte 100% glutenfrie ramen-restaurant. Også hel-vegansk. Du kan nyte flere varianter av ramen (basert på soyamelk), glutenfri gyoza, soyakroketter og til og med glutenfri dessert. Svært populært, så kom tidlig eller vær forberedt på å stå i kø.",
+                    menuItems: [
+                        { japanese: "豆乳ラーメン", translation: "Soyamelk-ramen" },
+                        { japanese: "グルテンフリー餃子", translation: "Glutenfri gyoza" }
+                    ]
+                },
+                {
+                    name: "Kyoto Engine Ramen",
+                    address: "Kawaramachi/Shinkyogoku-området, Kyoto",
+                    city: "Kyoto",
+                    notes: "Moderne ramen-restaurant kjent for glutenfrie nudler. Eierens datter har cøliaki. Nudler laget av f.eks. soyabønner eller konjakrot, og disse kokes i en egen seksjon av kjelen for å unngå krysskontaminering. Får strålende omtaler.",
+                    menuItems: [
+                        { japanese: "ゼスティースパイシーラーメン", translation: "Zesty Spicy Ramen" },
+                        { japanese: "こんにゃく麺", translation: "Konjaknudler" }
+                    ]
+                },
+                {
+                    name: "Kikyo Sushi",
+                    address: "Daimonji-cho 43-2, Nakagyō-ku, Kyoto",
+                    city: "Kyoto",
+                    notes: "Autentisk, familiedrevet sushi-restaurant (over 60 år gammel) med glutenfri forståelse. Tilbyr glutenfri soyasaus og unngår ingredienser som inneholder gluten. Mange regner dette som en av de beste sushi-opplevelsene i Kyoto. Reservasjon anbefales, og oppgi gjerne at du trenger glutenfri tilpasning når du booker.",
+                    menuItems: [
+                        { japanese: "刺身盛り合わせ", translation: "Sashimi-utvalg" },
+                        { japanese: "グルテンフリー醤油", translation: "Glutenfri soyasaus" }
+                    ]
+                },
+                {
+                    name: "Teuchi Toru Soba",
+                    address: "Matsuyachō 35-1, Nakagyō-ku, Kyoto (nær Kyoto Gyoen/nord for sentrum)",
+                    city: "Kyoto",
+                    notes: "Bitteliten, autentisk soba-restaurant drevet av én mann (Toru) som gjør alt selv. Alle sobanudlene er 100% bokhvete (juwari soba) og dermed naturlig glutenfrie. Toru-san er svært kunnskapsrik om cøliaki og garanterer glutenfrihet ved å kjøpe og male bokhveten selv. Han har glutenfri soyasaus tilgjengelig. Kun lunsjåpent og tar ikke reservasjoner, så du må regne med ca. 30 min kø.",
+                    menuItems: [
+                        { japanese: "十割蕎麦", translation: "Juwari soba (100% bokhvetenudler)" },
+                        { japanese: "グルテンフリー醤油", translation: "Glutenfri soyasaus" }
+                    ]
+                },
+                {
+                    name: "Yosiya",
+                    address: "Sagatenryuji Tsukurimichicho 31, Ukyo-ku, Kyoto (Arashiyama)",
+                    city: "Kyoto",
+                    notes: "Tradisjonell restaurant i idylliske Arashiyama som er både halal-orientert og cøliaki-vennlig. Kjent for at de kan tilberede glutenfri tempura. Med forhåndsreservasjon kan man bestille et eget glutenfritt kaiseki-inspirert settmeny. Restauranten ligger i en vakker hage. NB: Få gjerne en japansktalende til å ringe og ordne reservasjon.",
+                    menuItems: [
+                        { japanese: "グルテンフリー天ぷら", translation: "Glutenfri tempura" },
+                        { japanese: "グルテンフリー会席", translation: "Glutenfri kaiseki-meny" }
+                    ]
+                }
+            ],
+            "Osaka": [
+                {
+                    name: "Shinsekai Paprika Shokudo",
+                    address: "3-4-5 Ebisuhigashi, Naniwa-ku, Osaka (Shinsekai-området, nær Tsūtenkaku-tårnet)",
+                    city: "Osaka",
+                    notes: "Hel-vegansk og glutenfri restaurant i Shinsekai-området (en bakgate like ved Tsūtenkaku-tårnet). Spesialiserer seg på autentiske Osaka-retter gjort veganske og glutenfrie – takoyaki, kushikatsu og ramen, alt uten gluten.",
+                    menuItems: [
+                        { japanese: "グルテンフリーたこ焼き", translation: "Glutenfri takoyaki" },
+                        { japanese: "グルテンフリー串カツ", translation: "Glutenfri kushikatsu" }
+                    ]
+                },
+                {
+                    name: "Second Room Cafe",
+                    address: "Osaka Ekimae 4th Building B1F, 1-11-4 Umeda, Kita-ku, Osaka (i kjelleren av bygg 4 ved Osaka stasjon)",
+                    city: "Osaka",
+                    notes: "100% glutenfritt og vegansk spisested sentralt i Umeda, nær Osaka stasjon. Også kjent som 'Vegan & GlutenFree Osaka'. Menyen dekker et bredt spekter av japanske favoritter: ramen, okonomiyaki, takoyaki, gyoza og temaki-sushi.",
+                    menuItems: [
+                        { japanese: "豚骨風ラーメン", translation: "Tonkotsu-stil veggie-ramen" },
+                        { japanese: "お好み焼き", translation: "Okonomiyaki" }
+                    ]
+                },
+                {
+                    name: "Shojin Sushi Minamo",
+                    address: "Shinsaibashi, Osaka (B1 bak Nikko Hotel, 2 min gange fra Shinsaibashi stasjon)",
+                    city: "Osaka",
+                    notes: "Nyåpnet sushi-restaurant (etablert sep. 2024) i Shinsaibashi som er både helt glutenfri og vegansk. Bredt utvalg nigiri og maki laget i shōjin ryōri-stil (vegansk), men viktigst: helt uten gluten. Hvit inngang i kjelleretasjen (B1) bak Nikko Hotel.",
+                    menuItems: [
+                        { japanese: "精進寿司盛り合わせ", translation: "Shojin sushi-utvalg" },
+                        { japanese: "グルテンフリー巻き寿司", translation: "Glutenfrie maki" }
+                    ]
+                },
+                {
+                    name: "OKO Takoyaki",
+                    address: "1-15-24 Higashishinsaibashi, Chūō-ku, Osaka (nær Dōtonbori, Shinsaibashi området)",
+                    city: "Osaka",
+                    notes: "Lite vegansk gatekjøkken i Shinsaibashi som spesialiserer seg på Osakas klassiske street food. Takoyaki lages her i en glutenfri røre, toppet med autentisk takoyakisaus (også glutenfri). I tillegg serverer de kushikatsu – fritert mat på spyd – med ulike sausparinger. Alt på menyen er vegansk og glutenfritt. Begrenset med sitteplasser (mest en bar disk).",
+                    menuItems: [
+                        { japanese: "グルテンフリーたこ焼き", translation: "Glutenfri takoyaki" },
+                        { japanese: "グルテンフリー串カツ", translation: "Glutenfri kushikatsu" }
+                    ]
+                },
+                {
+                    name: "Alohana Vegan Ramen",
+                    address: "2-5-2 Kawaramachi, Chūō-ku, Osaka (ca. 10 min gange fra Kitahama stasjon)",
+                    city: "Osaka",
+                    notes: "Familiedrevet vegansk ramen-kafé i Osaka sentrum (Kawaramachi-området, nær Kitahama). Glutenfritt alternativ: Bytt til glassnudler i stedet for hvete-nudler. Ramen'en har fått skryt for sin fyldige smak og rike grønnsaksbuljong. NB: Alohana holder kun åpent i helgene noen få timer.",
+                    menuItems: [
+                        { japanese: "味噌ラーメン(春雨麺)", translation: "Miso-ramen med glassnudler" },
+                        { japanese: "春雨麺ベジラーメン", translation: "Veggie-ramen med glassnudler" }
+                    ]
+                }
+            ]
+        };
+        
+        // For å lagre geolokasjon
+        let userPosition = null;
+        
+        // Hent alle restauranter
+        function getAllRestaurants() {
+            return [...cityRestaurants.Tokyo, ...cityRestaurants.Kyoto, ...cityRestaurants.Osaka];
+        }
+        
+        // Beregn koordinater (i en full versjon ville dette brukt en geocoding service)
+        // Dette er en forenklet simulering for demo
+        function simulateGeocode(address, city) {
+            // Basert på byens omtrentlige koordinater med små variasjoner
+            const baseLoc = {
+                "Tokyo": { lat: 35.6762, lng: 139.6503 },
+                "Kyoto": { lat: 35.0116, lng: 135.7681 },
+                "Osaka": { lat: 34.6937, lng: 135.5023 }
+            };
+            
+            // Legg til tilfeldig variasjon for å simulere ulike steder i byen
+            const offset = 0.02; // ~2km
+            const randomLat = (Math.random() * offset * 2) - offset;
+            const randomLng = (Math.random() * offset * 2) - offset;
+            
+            return {
+                lat: baseLoc[city].lat + randomLat,
+                lng: baseLoc[city].lng + randomLng
+            };
+        }
+        
+        // Beregn avstanden mellom to koordinater i km (Haversine formel)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius av jorden i km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2); 
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            const distance = R * c; // Avstand i km
+            return distance;
+        }
+        
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+        
+        // Formater avstand for visning
+        function formatDistance(distance) {
+            if (distance < 1) {
+                return Math.round(distance * 1000) + " meter";
+            } else {
+                return distance.toFixed(1) + " km";
+            }
+        }
+        
+        // Vis restauranter filtrert etter by
+        function displayRestaurantsByCity() {
+            const selectedCity = document.getElementById('city-filter').value;
+            const statusElement = document.getElementById('status-message');
+            const container = document.getElementById('restaurants-container');
+            container.innerHTML = '';
+            
+            let restaurantsToShow = [];
+            
+            if (selectedCity === 'all') {
+                restaurantsToShow = getAllRestaurants();
+                statusElement.textContent = "Viser alle restauranter";
+            } else {
+                restaurantsToShow = cityRestaurants[selectedCity] || [];
+                statusElement.textContent = `Viser restauranter i ${selectedCity}`;
+            }
+            
+            if (restaurantsToShow.length === 0) {
+                statusElement.textContent = "Ingen restauranter funnet";
+                return;
+            }
+            
+            // Beregn koordinater for hver restaurant (hvis ikke allerede gjort)
+            restaurantsToShow.forEach(restaurant => {
+                if (!restaurant.lat || !restaurant.lng) {
+                    const coords = simulateGeocode(restaurant.address, restaurant.city);
+                    restaurant.lat = coords.lat;
+                    restaurant.lng = coords.lng;
+                }
+            });
+            
+            // Vis restauranter
+            displayRestaurantCards(restaurantsToShow);
+        }
+        
+        // Finn nærmeste restaurant basert på brukerens posisjon
+        function findClosestRestaurant() {
+            const statusElement = document.getElementById('status-message');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            
+            statusElement.textContent = "Henter din posisjon...";
+            loadingSpinner.style.display = 'block';
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        userPosition = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        
+                        statusElement.textContent = "Beregner avstander...";
+                        
+                        // Hent alle restauranter
+                        let allRestaurants = getAllRestaurants();
+                        
+                        // Beregn koordinater for hver restaurant hvis ikke allerede gjort
+                        allRestaurants.forEach(restaurant => {
+                            if (!restaurant.lat || !restaurant.lng) {
+                                const coords = simulateGeocode(restaurant.address, restaurant.city);
+                                restaurant.lat = coords.lat;
+                                restaurant.lng = coords.lng;
+                            }
+                        });
+                        
+                        // Beregn avstand til hver restaurant
+                        allRestaurants.forEach(restaurant => {
+                            restaurant.distance = calculateDistance(
+                                userPosition.lat, userPosition.lng,
+                                restaurant.lat, restaurant.lng
+                            );
+                        });
+                        
+                        // Sorter etter avstand
+                        allRestaurants.sort((a, b) => a.distance - b.distance);
+                        
+                        // Vis resultater
+                        displayRestaurantCards(allRestaurants);
+                        statusElement.textContent = "Restauranter sortert etter avstand:";
+                        loadingSpinner.style.display = 'none';
+                    },
+                    function(error) {
+                        loadingSpinner.style.display = 'none';
+                        
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                statusElement.textContent = "Du må gi tillatelse til posisjonstjenester for å bruke denne funksjonen.";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                statusElement.textContent = "Posisjonsinformasjon er utilgjengelig.";
+                                break;
+                            case error.TIMEOUT:
+                                statusElement.textContent = "Tidsavbrudd for posisjonsforespørsel.";
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                statusElement.textContent = "En
