@@ -39,10 +39,8 @@
     <meta name="theme-color" content="#c42626">
     
     <!-- Emoji Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍜</text></svg>">
-    
-    <!-- Apple Touch Icon (for iOS enheter) -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍜</text></svg>">
+    <link rel="icon" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
     
     <style>
         :root {
@@ -519,11 +517,12 @@
         import allRestaurants from './restaurants-data.js';
         
         // Logg antall restauranter for hver by
-        console.log('Antall restauranter i Osaka:', allRestaurants.Osaka.length);
-        console.log('Antall restauranter i Kyoto:', allRestaurants.Kyoto.length);
-        console.log('Antall restauranter i Tokyo:', allRestaurants.Tokyo.length);
-        console.log('Antall restauranter i Oslo:', allRestaurants.Oslo.length);
-        console.log('Antall restauranter i London:', allRestaurants.London.length);
+        console.log('Verifisering av restaurantdata:');
+        console.log('Osaka:', allRestaurants.Osaka.length);
+        console.log('Kyoto:', allRestaurants.Kyoto.length);
+        console.log('Tokyo:', allRestaurants.Tokyo.length);
+        console.log('Oslo:', allRestaurants.Oslo.length);
+        console.log('London:', allRestaurants.London.length);
         
         // DOM-elementer
         const cityFilter = document.getElementById('city-filter');
@@ -608,41 +607,41 @@
                 restaurantsToShow.sort((a, b) => a.distance - b.distance);
             }
             
-            // Gå gjennom hver restaurant og opprett kort
+            // Vis restauranter direkte i HTML
             restaurantsToShow.forEach((restaurant, index) => {
-                // Opprett HTML for restaurantkortet
-                const cardHTML = createRestaurantCardHTML(restaurant, index);
-                
-                // Legg til kortet i containeren
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = cardHTML;
-                const card = tempDiv.firstChild;
-                restaurantsContainer.appendChild(card);
-                
-                // Legg til klikkhåndtering for utvid/skjul-knappen
-                const toggleBtn = card.querySelector(`.toggle-btn-${index}`);
-                const details = card.querySelector(`#restaurant-details-${index}`);
-                
-                toggleBtn.addEventListener('click', function() {
-                    const isExpanded = details.style.display === 'block';
-                    details.style.display = isExpanded ? 'none' : 'block';
-                    details.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
-                    toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-                    
-                    // Endre ikon og tekst
-                    const chevronIcon = toggleBtn.querySelector('.show-more-icon');
-                    const showMoreText = toggleBtn.querySelector('.show-more-text');
-                    
-                    if (isExpanded) {
-                        chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
-                        showMoreText.textContent = 'Mer';
-                    } else {
-                        chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Skjul informasjon');
-                        showMoreText.textContent = 'Skjul';
-                    }
-                });
+                restaurantsContainer.innerHTML += createRestaurantCardHTML(restaurant, index);
+            });
+            
+            // Legg til event listeners etter at HTML er lagt til
+            restaurantsToShow.forEach((restaurant, index) => {
+                const toggleBtn = document.querySelector(`.toggle-btn-${index}`);
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        const details = document.getElementById(`restaurant-details-${index}`);
+                        if (details) {
+                            const isExpanded = details.style.display === 'block';
+                            details.style.display = isExpanded ? 'none' : 'block';
+                            details.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+                            toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+                            
+                            // Endre ikon og tekst
+                            const chevronIcon = toggleBtn.querySelector('.show-more-icon');
+                            const showMoreText = toggleBtn.querySelector('.show-more-text');
+                            
+                            if (chevronIcon && showMoreText) {
+                                if (isExpanded) {
+                                    chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+                                    toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
+                                    showMoreText.textContent = 'Mer';
+                                } else {
+                                    chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+                                    toggleBtn.setAttribute('aria-label', 'Skjul informasjon');
+                                    showMoreText.textContent = 'Skjul';
+                                }
+                            }
+                        }
+                    });
+                }
             });
             
             // Logg antall restaurantkort som faktisk ble opprettet
@@ -741,8 +740,12 @@
             findNearestBtn.disabled = true;
             statusMessage.textContent = "Henter din posisjon...";
             
+            // Logg for debugging
+            console.log("Starter geolocation-forespørsel...");
+            
             // Sjekk om geolokasjon er tilgjengelig
             if (!navigator.geolocation) {
+                console.log("Geolocation er ikke støttet av nettleseren");
                 errorMessage.textContent = "Geolokasjon støttes ikke av denne nettleseren.";
                 errorMessage.style.display = 'block';
                 loadingSpinner.style.display = 'none';
@@ -757,18 +760,34 @@
             }
             
             // Prøv å få posisjonen med høy nøyaktighet først
-            navigator.geolocation.getCurrentPosition(
-                handlePositionSuccess,
-                function(error) {
-                    // Hvis høy nøyaktighet feiler, prøv med lavere nøyaktighet
-                    navigator.geolocation.getCurrentPosition(
-                        handlePositionSuccess,
-                        handlePositionError,
-                        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
-                    );
-                },
-                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-            );
+            try {
+                console.log("Forsøker å hente posisjon med høy nøyaktighet...");
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        console.log("Posisjon hentet vellykket:", position.coords.latitude, position.coords.longitude);
+                        handlePositionSuccess(position);
+                    },
+                    function(error) {
+                        console.log("Feil ved høy nøyaktighet, prøver med lav nøyaktighet. Feilkode:", error.code);
+                        // Hvis høy nøyaktighet feiler, prøv med lavere nøyaktighet
+                        navigator.geolocation.getCurrentPosition(
+                            handlePositionSuccess,
+                            function(error) {
+                                console.log("Feil også med lav nøyaktighet. Feilkode:", error.code);
+                                handlePositionError(error);
+                            },
+                            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                        );
+                    },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            } catch (e) {
+                console.error("Uventet feil ved geolocation:", e);
+                errorMessage.textContent = "En uventet feil oppstod ved posisjonshenting: " + e.message;
+                errorMessage.style.display = 'block';
+                loadingSpinner.style.display = 'none';
+                findNearestBtn.disabled = false;
+            }
         }
         
         // Håndter vellykket posisjonshenting
@@ -778,6 +797,7 @@
                 lng: position.coords.longitude
             };
             
+            console.log("Posisjon hentet vellykket:", userPosition);
             infoMessage.style.display = 'none';
             statusMessage.textContent = "Beregner avstander...";
             
@@ -786,6 +806,8 @@
             for (const city in allRestaurants) {
                 allRestaurantsList = allRestaurantsList.concat(allRestaurants[city]);
             }
+            
+            console.log("Totalt antall restauranter funnet:", allRestaurantsList.length);
             
             // Beregn avstand til hver restaurant
             allRestaurantsList.forEach(restaurant => {
@@ -798,44 +820,51 @@
             // Sorter etter avstand
             allRestaurantsList.sort((a, b) => a.distance - b.distance);
             
-            // Vis resultater
+            // Tøm container først
             restaurantsContainer.innerHTML = '';
+            
+            // Vis resultater - bruk direkte HTML-innsetting
             allRestaurantsList.forEach((restaurant, index) => {
-                const cardHTML = createRestaurantCardHTML(restaurant, index);
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = cardHTML;
-                const card = tempDiv.firstChild;
-                restaurantsContainer.appendChild(card);
-                
-                // Legg til klikkhåndtering for utvid/skjul-knappen
-                const toggleBtn = card.querySelector(`.toggle-btn-${index}`);
-                const details = card.querySelector(`#restaurant-details-${index}`);
-                
-                toggleBtn.addEventListener('click', function() {
-                    const isExpanded = details.style.display === 'block';
-                    details.style.display = isExpanded ? 'none' : 'block';
-                    details.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
-                    toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-                    
-                    // Endre ikon og tekst
-                    const chevronIcon = toggleBtn.querySelector('.show-more-icon');
-                    const showMoreText = toggleBtn.querySelector('.show-more-text');
-                    
-                    if (isExpanded) {
-                        chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
-                        showMoreText.textContent = 'Mer';
-                    } else {
-                        chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
-                        toggleBtn.setAttribute('aria-label', 'Skjul informasjon');
-                        showMoreText.textContent = 'Skjul';
-                    }
-                });
+                restaurantsContainer.innerHTML += createRestaurantCardHTML(restaurant, index);
+            });
+            
+            // Legg til event listeners etter at HTML er lagt til
+            allRestaurantsList.forEach((restaurant, index) => {
+                const toggleBtn = document.querySelector(`.toggle-btn-${index}`);
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        const details = document.getElementById(`restaurant-details-${index}`);
+                        if (details) {
+                            const isExpanded = details.style.display === 'block';
+                            details.style.display = isExpanded ? 'none' : 'block';
+                            details.setAttribute('aria-hidden', isExpanded ? 'true' : 'false');
+                            toggleBtn.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
+                            
+                            // Endre ikon og tekst
+                            const chevronIcon = toggleBtn.querySelector('.show-more-icon');
+                            const showMoreText = toggleBtn.querySelector('.show-more-text');
+                            
+                            if (chevronIcon && showMoreText) {
+                                if (isExpanded) {
+                                    chevronIcon.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+                                    toggleBtn.setAttribute('aria-label', 'Vis mer informasjon');
+                                    showMoreText.textContent = 'Mer';
+                                } else {
+                                    chevronIcon.innerHTML = '<polyline points="18 15 12 9 6 15"></polyline>';
+                                    toggleBtn.setAttribute('aria-label', 'Skjul informasjon');
+                                    showMoreText.textContent = 'Skjul';
+                                }
+                            }
+                        }
+                    });
+                }
             });
             
             statusMessage.textContent = "Restauranter sortert etter avstand:";
             loadingSpinner.style.display = 'none';
             findNearestBtn.disabled = false;
+            
+            console.log("Visning av restauranter fullført");
         }
         
         // Håndter feil ved posisjonshenting
@@ -878,10 +907,12 @@
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
+                    console.log("Posisjon hentet i bakgrunnen:", userPosition);
                     // Ikke gjør noe mer her - brukeren må klikke på knappen for å se resultater
                 },
                 function(error) {
                     // Ignorer feil her - vi vil bare sjekke tillatelse
+                    console.log("Kunne ikke hente posisjon i bakgrunnen:", error.code);
                 },
                 { timeout: 3000, maximumAge: 60000 }
             );
@@ -889,4 +920,3 @@
     </script>
 </body>
 </html>
-
